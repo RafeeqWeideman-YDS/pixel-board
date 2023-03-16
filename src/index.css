@@ -1,0 +1,23 @@
+body {
+    margin: 0px;
+}
+
+.Content {
+    display: block;
+    justify-content: center;
+    align-items: center;
+}
+
+.packageContainer {
+    /* background-color: blueviolet; */
+    width: 500px;
+}
+
+.colorPicker {
+    position: absolute;
+    height: 60%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
