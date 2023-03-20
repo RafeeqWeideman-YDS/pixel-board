@@ -8,13 +8,36 @@ import { Sketch } from '@uiw/react-color';
 
 function Main() {
     const canvasRef = useRef(null);
+    const layerRef = useRef(null);
     const [data, setData] = useState(true);
     const editorRef = useRef(null);
     const [editor, setEditor] = useState(null);
     const [colorPalette, setColorPalette] = useState(false);
     const [selectedColor, setSelectedColor] = useState("#000");
     const [saveCanvasData, setSaveCanvasData] = useState(null);
-    // const [gridSize, setGridSize] = useState(8); // Change the grid size here
+
+    const [layers, setLayers] = useState([
+        { name: 'Layer 1', visible: true },
+        // { name: 'Layer 2', visible: true },
+    ]);
+
+    const addLayer = () => {
+        const newLayerName = `Layer ${layers.length + 1}`;
+        const newLayer = { name: newLayerName, visible: true };
+        setLayers([...layers, newLayer]);
+    };
+
+    const deleteLayer = (index) => {
+        const newLayers = [...layers];
+        newLayers.splice(index, 1);
+        setLayers(newLayers);
+    };
+
+    const toggleLayerVisibility = (index) => {
+        const newLayers = [...layers];
+        newLayers[index].visible = !newLayers[index].visible;
+        setLayers(newLayers);
+    };
 
     function handleChange() {
         setColorPalette(!colorPalette);
@@ -44,56 +67,31 @@ function Main() {
         }
     }
 
-
-    // function restoreCanvasData() {
-    //   if (editorRef.current && saveCanvasData) {
-    //     const canvas = editorRef.current;
-    //     const ctx = canvas.getContext('2d');
-    //     const img = new Image();
-    //     img.onload = () => {
-    //       ctx.clearRect(0, 0, canvas.width, canvas.height);
-    //       ctx.drawImage(img, 0, 0);
-    //     };
-    //     img.src = saveCanvasData;
-    //     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    //     ctx.putImageData(imageData, 0, 0);
-    //   }
-    // }
+    useEffect(() => {
+        if (editorRef.current && !editor) {
+            const newEditor = new PixelEditor(editorRef.current, 64, 64, new Pencil(selectedColor));
+            setEditor(newEditor);
+            editorRef.current.editor = editor;
+        }
+    }, [editorRef, editor, selectedColor]);
 
     // useEffect(() => {
-    //   if (editorRef.current) {
-    //     const canvas = editorRef.current;
-    //     const ctx = canvas.getContext('2d');
-
-    //     // Draw the grid lines
-    //     ctx.lineWidth = 1;
-    //     ctx.strokeStyle = '#ccc';
-    //     for (let i = 0; i <= canvas.width; i += gridSize) {
-    //       ctx.beginPath();
-    //       ctx.moveTo(i, 0);
-    //       ctx.lineTo(i, canvas.height);
-    //       ctx.stroke();
+    //     if (editor) {
+    //         editor.setLayers(layers);
     //     }
-    //     for (let i = 0; i <= canvas.height; i += gridSize) {
-    //       ctx.beginPath();
-    //       ctx.moveTo(0, i);
-    //       ctx.lineTo(canvas.width, i);
-    //       ctx.stroke();
-    //     }
-    //   }
-    // }, [gridSize]);
+    // }, [editor, layers]);
 
     useEffect(() => {
-        if (editorRef.current) {
-            setEditor(new PixelEditor(editorRef.current, 64, 64, new Pencil(selectedColor)));
+        if (editorRef.current && editorRef.current.editor) {
+            editorRef.current.editor.setLayers(layers);
         }
-    }, []);
+    }, [editorRef, layers]);
 
     useEffect(() => {
         if (editor) {
             editor.tool = new Pencil(selectedColor, 4);
         }
-    }, [selectedColor]);
+    }, [editor, selectedColor]);
 
     return (
         <>
@@ -107,7 +105,26 @@ function Main() {
                             </div>
                         )}
 
-                        <canvas ref={editorRef} style={{ height: 500, borderStyle: "solid" }} />
+
+                        {layers.map((layer, index) => (
+                            <div key={index}>
+                                <input
+                                    type="checkbox"
+                                    checked={layer.visible}
+                                    onChange={() => toggleLayerVisibility(index)}
+                                />
+                                <span>{layer.name}</span>
+                                <button onClick={() => deleteLayer(index)}>Delete</button>
+                            </div>
+                        ))}
+
+                        {layers.map((layer, index) => (
+                            <div key={index} style={{ display: layer.visible ? 'block' : 'none' }}>
+                                {layer.canvas}
+                                <canvas ref={editorRef} style={{ height: 500, borderStyle: "solid" }} />
+                            </div>
+                        ))}
+
                         <div ref={canvasRef} />
                         <button onClick={() => { if (editor) editor.tool = new Pencil() }}>Eraser</button>
                         <button onClick={() => { if (editor) editor.tool = new Pencil(selectedColor) }}>Pencil</button>
@@ -115,9 +132,8 @@ function Main() {
                         <button onClick={() => { if (editor) editor.redo() }}>Redo</button>
                         <button onClick={handleChange}>Palette</button>
                         <button onClick={saveCanvasDataToLocalStorage}>Save</button>
-                        {/* <button onClick={() => setGridSize(gridSize + 1)}>Increase Grid Size</button>
-            <button onClick={() => setGridSize(gridSize - 1)}>Decrease Grid Size</button> */}
-                        {/* <button onClick={restoreCanvasData}>Restore</button> */}
+                        <button onClick={addLayer}>Add Layer</button>
+
                     </Content>
                 </div>
             )}
