@@ -4,7 +4,7 @@ const Content = (props) => {
     return (
         <div
             className="Content"
-            style={{ height: 550 }}
+            // style={{ height: 550 }}
         >
             {props.children}
         </div>

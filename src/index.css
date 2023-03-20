@@ -1,23 +1,21 @@
 body {
-    margin: 0px;
-}
-
-.Content {
-    display: block;
-    justify-content: center;
-    align-items: center;
-}
-
-.packageContainer {
-    /* background-color: blueviolet; */
-    width: 500px;
-}
-
-.colorPicker {
-    position: absolute;
-    height: 60%;
-    width: 100%;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+        monospace;
+}
+
+/* canvas {
+    border: 1px solid black;
+    background-color: lightgray;
+} */
