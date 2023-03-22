@@ -1,12 +1,10 @@
 import React from 'react'
-import Main from './components/Main'
+import LayerSys from './components/LayerSys'
 
 const App = () => {
   return (
     <div>
-      <div className='mainContainer' style={{ width: 500 }} >
-        <Main />
-      </div>
+      <LayerSys />
     </div>
   )
 }

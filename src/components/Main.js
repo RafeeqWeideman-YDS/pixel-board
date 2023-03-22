@@ -120,7 +120,7 @@ function Main() {
 
                         {layers.map((layer, index) => (
                             <div key={index} style={{ display: layer.visible ? 'block' : 'none' }}>
-                                {layer.canvas}
+                                {layer.name}
                                 <canvas ref={editorRef} style={{ height: 500, borderStyle: "solid" }} />
                             </div>
                         ))}
